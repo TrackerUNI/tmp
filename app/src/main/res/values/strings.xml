@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">UNITRACKERV1.2</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_home">Join Circle</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Invite Friends</string>
 </resources>
