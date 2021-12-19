@@ -1,4 +1,4 @@
-package com.example.firebasev12
+package com.example.unitrackerv12
 
 
 import android.util.Log
@@ -10,7 +10,7 @@ import com.google.firebase.firestore.*
 import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.toObject
 import com.google.type.DateTime
-import com.squareup.okhttp.internal.DiskLruCache
+//import com.squareup.okhttp.internal.DiskLruCache
 
 import java.time.LocalDateTime
 import javax.security.auth.callback.Callback
@@ -32,15 +32,14 @@ data class Position(
     val time: Timestamp = Timestamp.now()
 )
 
-class UserData(
+data class UserData(
     val userid: String? = null,
-    val name: String? = null,
+    val username: String? = null,
     val lastPosition: Position? = null){
 
 }
 
 data class GroupData(
-    var groupid: String? = null,
     var name: String? = null,
     var admins: List<String>? = null,
     var users: List<String>? = null
@@ -54,7 +53,7 @@ class UserManager
         val collection: CollectionReference = db.collection("users")
 
 
-        @JvmStatic fun init(userid: String, email: String)
+        @JvmStatic fun init(userid: String, email: String, username: String)
                 /*
                  * Initialize a document of an user with ID: userid (Note: Use this function when the user has been created (sign up))
                  */
@@ -65,7 +64,7 @@ class UserManager
             //lastPosition = null
             //var positions = mapOf<String, Position>()
 
-            var userData: UserData = UserData(userid = userid)
+            var userData: UserData = UserData(userid = userid, username=username)
 
             document.set(userData)
                 .addOnCompleteListener{
@@ -128,22 +127,14 @@ class UserManager
                     .addOnFailureListener {  e -> Log.w(TAG, "Error adding position document", e)}
             }
         }
+
         @JvmStatic fun lastPosition(user: FirebaseUser?): Position?
                 /*
                  * Return the last position of a user
                  */
         {
-            var userid = user!!.uid
-            return  lastPosition(userid)
-
-        }
-
-        @JvmStatic fun lastPosition(userid: String): Position?
-                /*
-                 * Return the last position of a user
-                 */
-        {
             var position: Position? = null
+            var userid: String = user!!.uid
             UserManager.collection.document(userid).get()
                 .addOnSuccessListener { documentSnapshot ->
                     var userData: UserData? = documentSnapshot.toObject(UserData::class.java)
@@ -178,7 +169,7 @@ class GroupManager
         @JvmField
         val collection: CollectionReference = db.collection("groups")
 
-        @JvmStatic fun create(name: String): GroupData?
+        @JvmStatic fun create(name: String)
                 /*
                  * Create a group (document) to DB
                  */
@@ -198,8 +189,6 @@ class GroupManager
                     var groupid: String = doc.id
                     Log.d(TAG, "Grupo ${groupid} agregado")
                 }
-
-            return group
         }
 
         @JvmStatic fun get(groupid: String): GroupData?
@@ -219,21 +208,24 @@ class GroupManager
         @JvmStatic fun isAdmin(groupid: String, userid: String): Boolean
                 /*
                  * Check if a user is an administrator of the group
-                 */
-        {
+                 */ {
             var belong: Boolean = false
+            var data: GroupData? = null
+            var doc = GroupManager.collection.document(groupid)
 
-            var data: GroupData? = GroupManager.get(groupid)
-            if(data != null)
-            {
-                for(admin in data.admins!!) {
-                    if (admin == userid)
-                    {
-                        belong = true
-                        break
+            doc.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    data = documentSnapshot.toObject(GroupData::class.java)
+                    Log.d(TAG, "Group ${groupid}: ${data}")
+                    if (data != null) {
+                        for (admin in data!!.admins!!) { // replace by: belong = (admins_id in ARRAY)
+                            if (admin == userid) {
+                                belong = true
+                                break
+                            }
+                        }
                     }
                 }
-            }
 
             return belong
 
@@ -245,17 +237,22 @@ class GroupManager
                  */
         {
             var belong: Boolean = false
-            var groupData: GroupData? = null /*GroupManager.get(groupid)*/
+            var data: GroupData? = null /*GroupManager.get(groupid)*/
+            var doc = GroupManager.collection.document(groupid)
 
-            if(groupData != null)
-            {
-                for(user in groupData.admins!!) {
-                    if (user == userid) {
-                        belong = true
-                        break
+            doc.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    data = documentSnapshot.toObject(GroupData::class.java)
+                    Log.d(TAG, "Group ${groupid}: ${data}")
+                    if (data != null) {
+                        for (user in data!!.users!!) { // replace by: belong = (user_id in ARRAY)
+                            if (user == userid) {
+                                belong = true
+                                break
+                            }
+                        }
                     }
                 }
-            }
 
             return belong
         }
@@ -271,10 +268,12 @@ class GroupManager
         }
 
         @JvmStatic fun addAdmin(groupid: String, userid: String)
-        /*
-         * Add an user to admins
-         */
+                /*
+                 * Add an user to admins
+                 */
         {
+            GroupManager.collection.document(groupid).update("admins", FieldValue.arrayUnion(userid))
+            /*
             var userid: String = auth.currentUser!!.uid
             if(GroupManager.isAdmin(groupid, userid)) {
                 GroupManager.collection.document(groupid).update("admins", FieldValue.arrayUnion(userid))
@@ -284,14 +283,18 @@ class GroupManager
             {
                 Log.d(TAG, "Solo administradores pueden agregar otros adminis")
             }
+             */
         }
 
 
         @JvmStatic fun addUser(groupid: String, userid: String)
-        /*
-         * Add an user to users
-         */
+                /*
+                 * Add an user to users
+                 */
         {
+            GroupManager.collection.document(groupid).update("users", FieldValue.arrayUnion(userid))
+
+            /*
             var userid: String = auth.currentUser!!.uid
             if(GroupManager.isAdmin(groupid, userid)) {
                 GroupManager.collection.document(groupid).update("users", FieldValue.arrayUnion(userid))
@@ -301,6 +304,8 @@ class GroupManager
             {
                 Log.d(TAG, "Solo administradores pueden agregar otros usuarios")
             }
+
+             */
         }
 
         @JvmStatic fun remove(groupid: String)
@@ -314,18 +319,32 @@ class GroupManager
                 .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
         }
 
-        @JvmStatic fun lastPositions(groupid: String): MutableMap<String, Position>
+        @JvmStatic fun lastPositions(groupid: String): MutableMap<String?, Position?> // {username: position, ...}
                 /*
                  * Return the last position of all the users of this group
                  */
         {
             var groupData: GroupData? = null /*GroupManager.get(groupid)*/
-            var lastPositions: MutableMap<String, Position> = mutableMapOf()
+            var lastPositions: MutableMap<String?, Position?> = mutableMapOf()
 
-            groupData!!.users?.forEach { userid ->
-                var position: Position = UserManager.lastPosition(userid)!!
-                lastPositions[userid] = position
-            }
+            var doc = GroupManager.collection.document(groupid)
+            doc.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    groupData = documentSnapshot.toObject(GroupData::class.java)
+                    Log.d(TAG, "Positions group: ${groupid}")
+                    groupData!!.users?.forEach { userid ->
+                        UserManager.collection.document(userid)
+                            .get()
+                            .addOnSuccessListener { documentSnapshot ->
+                                var userData = documentSnapshot.toObject(UserData::class.java)
+                                var position: Position? = userData?.lastPosition
+                                lastPositions[userData!!.username] = position
+                                Log.d(TAG, "Position user ${userData.userid} (${userData.username}): (${position!!.latitude}, ${position!!.longitude})")
+                            }
+                        //var position: Position = UserManager.lastPosition(userid)!!
+                        //lastPositions[userid] = position
+                    }
+                }
 
             return lastPositions
         }
