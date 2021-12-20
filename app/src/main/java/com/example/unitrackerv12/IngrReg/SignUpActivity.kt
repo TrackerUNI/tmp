@@ -9,6 +9,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_signup.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.unitrackerv12.UserManagerV
 import com.example.unitrackerv12.R
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_signup.SU_Email
@@ -34,7 +35,7 @@ class SignUpActivity: AppCompatActivity() {
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
             if (SU_Email.text.toString().isNullOrEmpty() || SU_Password.text.toString()
-                    .isNullOrEmpty() || SU_Numero.text.toString().isNullOrEmpty())
+                    .isNullOrEmpty() || SU_Username.text.toString().isNullOrEmpty())
                 SU_Notificar.text = "Debes llenar todos los datos..."
             else {
                 //Modificar para añadir el número y nombres
@@ -47,6 +48,7 @@ class SignUpActivity: AppCompatActivity() {
                                 "Usuario creado"
                             val user = auth.currentUser
                             updateUI(user)
+                            UserManagerV.init(user!!.uid, SU_Email.text.toString(), SU_Username.text.toString())
                         } else {
                             SU_Notificar.text = "Hubo un error, por favor, vuelve a intentar."
                             updateUI(null)

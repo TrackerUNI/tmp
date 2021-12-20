@@ -4,9 +4,13 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.unitrackerv12.GroupManager
+import com.example.unitrackerv12.Position
+import com.example.unitrackerv12.UserManagerV
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -16,9 +20,15 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.example.unitrackerv12.databinding.ActivityMapsBinding
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlin.random.Random
+import kotlinx.android.synthetic.main.activity_maps.*
+import kotlinx.android.synthetic.main.activity_mngaccount.*
+import kotlinx.android.synthetic.main.activity_signup.*
+
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -30,8 +40,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationCallback: LocationCallback
     private lateinit var databaseRef: DatabaseReference
 
+    var auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    private var GroupIDTest : String? = null
+
     //PEDIR PERMISOS
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
@@ -54,41 +72,50 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 mMap.isMyLocationEnabled = true
                 getLocationAccess()
-            }
-            else {
-                Toast.makeText(this, "User has not granted location access permission", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "User has not granted location access permission",
+                    Toast.LENGTH_LONG
+                ).show()
                 finish()
             }
         }
     }
-    
+
     //COMPROBAR PERMISOS
     private fun getLocationAccess() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             mMap.isMyLocationEnabled = true
             getLocationUpdates()
             startLocationUpdates()
-        }
-        else
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST)
+        } else
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST
+            )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         super.onCreate(savedInstanceState)
-
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         //
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-
         //
         databaseRef = Firebase.database.reference
         databaseRef.addValueEventListener(logListener)
+        btnmngTracking.setOnClickListener {
+
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -98,18 +125,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.uiSettings.isZoomControlsEnabled = true
 
         getLocationAccess()
-        //createMarker()
-    }
-
-    fun createMarker(){
-        val ZoomLevel = 15f
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions()
-            .position(sydney)
-            .title("Marker in Sydney"))
-            ?.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,ZoomLevel))
     }
 
     private fun startLocationUpdates() {
@@ -137,37 +152,68 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         )
     }
 
+    fun createMarker(lat : Double, lng : Double, username : String){
+        val ubi = LatLng(lat, lng)
+        mMap.addMarker(MarkerOptions()
+            .position(ubi)
+            .title(username))
+            ?.setIcon(BitmapDescriptorFactory.defaultMarker(Random.nextInt(360).toFloat()))
+    }
+
+
+    private fun GetLocationGroup(groupid: String) {
+        var groupData: GroupData? = null /*GroupManager.get(groupid)*/
+        var lastPositions: MutableMap<String?, Position?> = mutableMapOf()
+
+        var doc = GroupManager.collection.document(groupid)
+        doc.get()
+            .addOnSuccessListener { documentSnapshot ->
+                groupData = documentSnapshot.toObject(GroupData::class.java)
+                Log.d(TAG, "Positions group: ${groupid}")
+                mMap.clear()
+                groupData!!.users?.forEach { userid ->
+                    UserManagerV.collection.document(userid)
+                        .get()
+                        .addOnSuccessListener { documentSnapshot ->
+                            var userData = documentSnapshot.toObject(UserData::class.java)
+                            var position: Position? = userData?.lastPosition
+                            lastPositions[userData!!.username] = position
+                            Log.d(TAG, "Position user ${userData.userid} (${userData.username}): (${position!!.latitude}, ${position!!.longitude})")
+                            userData!!.username?.let {
+                                createMarker(position.latitude, position.longitude,
+                                    it
+                                )
+                            }
+                        }
+                }
+            }
+    }
+
+
     //FIREBASE: Enviar datos a la bd
     private fun getLocationUpdates() {
         locationRequest = LocationRequest.create()
-        locationRequest.interval = 5000
-        locationRequest.fastestInterval = 2000
+        locationRequest.interval = 10000
+        locationRequest.fastestInterval = 5000
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-
+        //GroupManager.create("Familia")
+        btnGroup.setOnClickListener{
+            if (GroupID.text.isNullOrEmpty())
+            //Log.e(Tag,"Debes ingresar un GroupID")
+            else {
+                GroupIDTest=GroupID.text.toString()
+            }
+        }
 
         //-------------------------------FIREBASE---------------------------------------------
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 if (locationResult.locations.isNotEmpty()) {
                     val location = locationResult.lastLocation
-                    lateinit var databaseRef: DatabaseReference
-                    databaseRef = FirebaseDatabase.getInstance().getReference("uLocation")
-                    val uLocation = UserLocation(location.latitude, location.longitude)
-                    databaseRef.child("uLocation").child("userlocation").setValue(uLocation)
-                        .addOnSuccessListener {
-                            Toast.makeText(applicationContext, "Guardado", Toast.LENGTH_LONG).show()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(applicationContext, "Error", Toast.LENGTH_LONG).show()
-                        }
+                    val p = Position(location.latitude,location.longitude)
+                    UserManagerV.addPosition(auth.currentUser, p )
+                    GroupIDTest?.let { GetLocationGroup(it) }
 
-
-                    if (location != null) {
-                        val latLng = LatLng(location.latitude, location.longitude)
-                        val markerOptions = MarkerOptions().position(latLng)
-                        mMap.addMarker(markerOptions)
-                        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-                    }
                 }
             }
         }
@@ -186,7 +232,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 if (Lat !=null  && Long != null) {
                     val Loc = LatLng(Lat, Long)
-
                     val markerOptions = MarkerOptions().position(Loc).title(uName)
                     mMap.addMarker(markerOptions)
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Loc, 10f))
@@ -199,5 +244,4 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 .show()
         }
     }
-
 }

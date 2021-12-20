@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "326852616667",
+    "firebase_url": "https://unitracker-80154-default-rtdb.firebaseio.com",
     "project_id": "unitracker-80154",
     "storage_bucket": "unitracker-80154.appspot.com"
   },

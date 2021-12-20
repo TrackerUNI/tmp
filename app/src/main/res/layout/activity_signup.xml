@@ -60,12 +60,12 @@
         app:layout_constraintTop_toBottomOf="@+id/SU_Email" />
 
     <EditText
-        android:id="@+id/SU_Numero"
+        android:id="@+id/SU_Username"
         android:layout_width="300sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:ems="10"
-        android:hint="Número"
+        android:hint="Username"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SU_Numero" />
+        app:layout_constraintTop_toBottomOf="@+id/SU_Username" />
 
     <TextView
         android:id="@+id/SignIn"
