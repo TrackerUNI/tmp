@@ -2,18 +2,11 @@ package com.example.unitrackerv12
 
 
 import android.util.Log
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
-import com.google.firebase.firestore.auth.User
-import com.google.firebase.firestore.ktx.toObject
-import com.google.type.DateTime
 //import com.squareup.okhttp.internal.DiskLruCache
-
-import java.time.LocalDateTime
-import javax.security.auth.callback.Callback
 
 val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 var auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -39,13 +32,14 @@ data class UserData(
     val lastPosition: Position? = null)
 
 data class GroupData(
+    var groupid: String? = null,
     var name: String? = null,
     var admins: List<String>? = null,
     var users: List<String>? = null
 )
 
 
-class UserManagerV
+class UserManager
 {
     companion object{
         @JvmField
@@ -57,7 +51,7 @@ class UserManagerV
                  * Initialize a document of an user with ID: userid (Note: Use this function when the user has been created (sign up))
                  */
         {
-            var document = UserManagerV.collection.document(userid)
+            var document = UserManager.collection.document(userid)
             //var trackedGroups = listOf<String>()
             //var belongGroups = listOf<String>()
             //lastPosition = null
@@ -77,7 +71,7 @@ class UserManagerV
                  * Remove a user from users firebase collection
                  */
         {
-            UserManagerV.collection.document(user.uid)
+            UserManager.collection.document(user.uid)
                 .delete()
                 .addOnSuccessListener { Log.d(TAG, "User was successfully deleted") }
                 .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
@@ -101,7 +95,7 @@ class UserManagerV
         {
             var userPositions: MutableList<Position> = mutableListOf<Position>()
 
-            UserManagerV.collection.document(user.uid).collection("positions")
+            UserManager.collection.document(user.uid).collection("positions")
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     querySnapshot.documents.forEach { doc ->
@@ -120,8 +114,8 @@ class UserManagerV
         {
             if(user != null)
             {
-                UserManagerV.collection.document(user.uid).update("lastPosition", position)
-                UserManagerV.collection.document(user.uid).collection("positions").add(position)
+                UserManager.collection.document(user.uid).update("lastPosition", position)
+                UserManager.collection.document(user.uid).collection("positions").add(position)
                     .addOnSuccessListener { Log.d(TAG, "New position successfully added!") }
                     .addOnFailureListener {  e -> Log.w(TAG, "Error adding position document", e)}
             }
@@ -134,7 +128,7 @@ class UserManagerV
         {
             var position: Position? = null
             var userid: String = user!!.uid
-            UserManagerV.collection.document(userid).get()
+            UserManager.collection.document(userid).get()
                 .addOnSuccessListener { documentSnapshot ->
                     var userData: UserData? = documentSnapshot.toObject(UserData::class.java)
                     Log.d(TAG, "User data: ${userData}")
@@ -148,7 +142,7 @@ class UserManagerV
         @JvmStatic fun get(userid: String): UserData?
         {
             var userData: UserData? = null
-            UserManagerV.collection.document(userid).get()
+            UserManager.collection.document(userid).get()
                 .addOnSuccessListener{ documentSnapshot ->
                     userData = documentSnapshot.toObject(UserData::class.java)
                 }
@@ -186,6 +180,7 @@ class GroupManager
             GroupManager.collection.add(group!!)
                 .addOnSuccessListener { doc ->
                     var groupid: String = doc.id
+                    doc.update("groupid", groupid)
                     Log.d(TAG, "Grupo ${groupid} agregado")
                 }
         }
@@ -317,6 +312,37 @@ class GroupManager
                 .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
         }
 
+        @JvmStatic fun trackedGroups(userid: String)
+                /*
+                 * Get all the tracked groups by user userid
+                 * NOTE (IMPORTANT): Copy this function in your code
+                 */
+        {
+            var tracked_groups: MutableList<GroupData> = mutableListOf()
+
+            Log.d(TAG, "Tracked groups by ${userid}:")
+
+            GroupManager.collection.get()
+                .addOnSuccessListener { snapshot ->
+                    snapshot.documents.forEach { doc ->
+                        val data: GroupData? = doc.toObject(GroupData::class.java)
+                        var isadmin: Boolean = false
+                        for (admin in data!!.admins!!) { // replace by: belong = (admins_id in ARRAY)
+                            if (admin == userid) {
+                                isadmin = true
+                                break
+                            }
+                        }
+
+                        if(isadmin){
+                            tracked_groups.add(data)
+                            Log.d(TAG, "Tracked group: ${data.groupid}")
+                        }
+                    }
+                    // At this point you have all the groups in which user 'userid' is an admin user
+                }
+        }
+
         @JvmStatic fun lastPositions(groupid: String): MutableMap<String?, Position?> // {username: position, ...}
                 /*
                  * Return the last position of all the users of this group
@@ -331,7 +357,7 @@ class GroupManager
                     groupData = documentSnapshot.toObject(GroupData::class.java)
                     Log.d(TAG, "Positions group: ${groupid}")
                     groupData!!.users?.forEach { userid ->
-                        UserManagerV.collection.document(userid)
+                        UserManager.collection.document(userid)
                             .get()
                             .addOnSuccessListener { documentSnapshot ->
                                 var userData = documentSnapshot.toObject(UserData::class.java)
