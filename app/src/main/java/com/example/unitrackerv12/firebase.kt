@@ -32,6 +32,7 @@ data class Position(
     val time: Timestamp = Timestamp.now()
 )
 
+
 data class UserData(
     val userid: String? = null,
     val username: String? = null,

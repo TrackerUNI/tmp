@@ -8,9 +8,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.unitrackerv12.GroupManager
-import com.example.unitrackerv12.Position
-import com.example.unitrackerv12.UserManagerV
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -26,8 +23,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlin.random.Random
 import kotlinx.android.synthetic.main.activity_maps.*
-import kotlinx.android.synthetic.main.activity_mngaccount.*
-import kotlinx.android.synthetic.main.activity_signup.*
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -198,12 +193,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         //GroupManager.create("Familia")
         btnGroup.setOnClickListener{
-            if (GroupID.text.isNullOrEmpty())
+            if (id_grrupo.text.isNullOrEmpty())
             //Log.e(Tag,"Debes ingresar un GroupID")
             else {
-                GroupIDTest=GroupID.text.toString()
+                GroupIDTest=id_grrupo.text.toString()
             }
         }
+        //veriifcar si el id del grupo no e nulo y asignalor a GroupIdTest
+
+
+
+
+
+
+
+
 
         //-------------------------------FIREBASE---------------------------------------------
         locationCallback = object : LocationCallback() {
@@ -243,5 +247,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             Toast.makeText(applicationContext, "Error al leer datos", Toast.LENGTH_LONG)
                 .show()
         }
+
+
     }
+
 }

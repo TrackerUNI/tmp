@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="10dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="date"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="18sp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/groupTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="id de grupo"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:padding="3dp"
+                android:maxLines="1"
+                android:textColor="#000"/>
+            <TextView
+                android:id="@+id/nombregrupo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="Nombre del Grupo"
+                android:textSize="15dp" />
+            <TextView
+                android:id="@+id/numerointegrantes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="Numero de integrantes"
+                android:textSize="15dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/btnmngAccount2"
+        android:layout_width="136sp"
+        android:layout_height="wrap_content"
+        android:text="Admin Cuenta"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="683dp" />
+
+    <Button
+        android:id="@+id/btnMapa2"
+        android:layout_width="136sp"
+        android:layout_height="wrap_content"
+        android:text="Mapa"
+        app:layout_constraintStart_toEndOf="@+id/btnmngAccount2"
+        tools:layout_editor_absoluteY="683dp" />
+
+    <Button
+        android:id="@+id/btnmngTracking2"
+        android:layout_width="138dp"
+        android:layout_height="48dp"
+        android:text="Admin Tracking"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/btnMapa2"
+        tools:layout_editor_absoluteY="683dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
