@@ -13,6 +13,9 @@ jobs:
       - checkout
       - android/restore-gradle-cache
       - android/restore-build-cache
+      - run:
+          name: chmod permissions
+          command: chmod +x ./gradlew
       - android/run-tests:
           test-command: ./gradlew test
       - android/save-gradle-cache
@@ -43,5 +46,4 @@ workflows:
           filters:
             branches:
               only: main # Commits to main branch
-
 
