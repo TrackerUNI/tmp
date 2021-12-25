@@ -37,13 +37,9 @@ workflows:
   test-and-build:
     jobs: # only run workflow in master branch
       - unit-test
-        filters:
-          branches:
-            only: master # Commits to master branch
       - release-build:
           requires:
             - unit-test
           filters:
             branches:
               only: master # Commits to master branch
-
