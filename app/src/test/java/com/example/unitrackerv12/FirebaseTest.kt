@@ -31,6 +31,7 @@ class FirebaseTest {
         var email = "test@example.com"
         var password = "password"
         auth.createUserWithEmailAndPassword(email, password)
+        auth.signInWithEmailAndPassword(email, password)
     }
 
     @Test
