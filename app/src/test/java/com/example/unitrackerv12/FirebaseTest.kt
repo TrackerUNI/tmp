@@ -10,6 +10,7 @@ import com.google.firebase.firestore.*
 import com.example.unitrackerv12.UserManagerV
 import com.example.unitrackerv12.Position
 import com.example.unitrackerv12.UserData
+import com.google.firebase.ktx.Firebase
 import org.junit.After
 
 import org.junit.Assert.*
@@ -29,6 +30,8 @@ var email = "test@example.com"
 var password = "password"
 
 class FirebaseTest {
+    private lateinit var auth: FirebaseAuth
+
     /*
     @Before
     fun login()
@@ -56,7 +59,7 @@ class FirebaseTest {
 
     @Test
     fun test_add_position() {
-        var auth: FirebaseAuth = FirebaseAuth.getInstance()
+        auth = FirebaseAuth.getInstance()
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if(task.isSuccessful)
@@ -82,38 +85,41 @@ class FirebaseTest {
     @Test
     fun test_create_group()
     {
+        auth = FirebaseAuth.getInstance()
         auth.signInWithEmailAndPassword(email, password)
-        var name = "G00-test"
-        var groupid: String = ""
+            .addOnCompleteListener { task ->
+                var name = "G00-test"
+                var groupid: String = ""
 
-        // init - GroupManager.create
+                // init - GroupManager.create
 
-        var userid: String? = auth.currentUser?.uid
-        var admins: List<String> = listOf(userid!!)
-        var users: List<String> = listOf()
+                var userid: String? = auth.currentUser?.uid
+                var admins: List<String> = listOf(userid!!)
+                var users: List<String> = listOf()
 
-        var group: GroupData? = GroupData(
-            name = name,
-            users = users,
-            admins = admins
-        )
+                var group: GroupData? = GroupData(
+                    name = name,
+                    users = users,
+                    admins = admins
+                )
 
-        GroupManager.collection.add(group!!)
-            .addOnSuccessListener { doc ->
-                groupid = doc.id
-                doc.update("groupid", groupid)
-            }
-        // END - GroupManager.create
+                GroupManager.collection.add(group!!)
+                    .addOnSuccessListener { doc ->
+                        groupid = doc.id
+                        doc.update("groupid", groupid)
+                    }
+                // END - GroupManager.create
 
-        var data: GroupData? = null
+                var data: GroupData? = null
 
-        var doc = GroupManager.collection.document(groupid)
-        doc.get()
-            .addOnSuccessListener { documentSnapshot ->
-                data = documentSnapshot.toObject(GroupData::class.java)
+                var doc = GroupManager.collection.document(groupid)
+                doc.get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        data = documentSnapshot.toObject(GroupData::class.java)
 
-                assertEquals(data!!.groupid, groupid)
-                assertEquals(data!!.name, name)
+                        assertEquals(data!!.groupid, groupid)
+                        assertEquals(data!!.name, name)
+                    }
             }
     }
 }
