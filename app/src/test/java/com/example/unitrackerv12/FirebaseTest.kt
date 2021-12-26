@@ -58,19 +58,24 @@ class FirebaseTest {
     @Test
     fun test_add_position() {
         auth.signInWithEmailAndPassword(email, password)
-        var position = Position(71.2, -23.7)
-        UserManagerV.addPosition(auth.currentUser, position)
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful)
+                {
+                    var position = Position(71.2, -23.7)
+                    UserManagerV.addPosition(auth.currentUser, position)
 
-        var last_position: Position? = null
-        var userid: String = auth.currentUser!!.uid
-        UserManagerV.collection.document(userid).get()
-            .addOnSuccessListener { documentSnapshot ->
-                var userData: UserData? = documentSnapshot.toObject(UserData::class.java)
-                last_position = userData!!.lastPosition
+                    var last_position: Position? = null
+                    var userid: String = auth.currentUser!!.uid
+                    UserManagerV.collection.document(userid).get()
+                        .addOnSuccessListener { documentSnapshot ->
+                            var userData: UserData? = documentSnapshot.toObject(UserData::class.java)
+                            last_position = userData!!.lastPosition
 
 
-                assertEquals(position.latitude, last_position!!.latitude)
-                assertEquals(position.longitude, last_position!!.longitude)
+                            assertEquals(position.latitude, last_position!!.latitude)
+                            assertEquals(position.longitude, last_position!!.longitude)
+                        }
+                }
             }
     }
 
