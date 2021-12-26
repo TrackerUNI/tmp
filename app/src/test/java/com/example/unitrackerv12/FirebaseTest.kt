@@ -13,6 +13,7 @@ import com.example.unitrackerv12.UserData
 
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.BeforeClass
 
 
 val db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -25,7 +26,7 @@ var auth: FirebaseAuth = FirebaseAuth.getInstance()
  */
 
 class FirebaseTest {
-    @Before
+    @BeforeClass
     fun setUp()
     {
         var email = "test@example.com"
