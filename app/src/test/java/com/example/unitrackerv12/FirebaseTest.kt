@@ -27,6 +27,7 @@ var auth: FirebaseAuth = FirebaseAuth.getInstance()
  */
 
 class FirebaseTest {
+    /*
     @Before
     fun login()
     {
@@ -35,6 +36,7 @@ class FirebaseTest {
         //auth.createUserWithEmailAndPassword(email, password)
         auth.signInWithEmailAndPassword(email, password)
     }
+     */
 
     @Test
     fun otherSimpleTest() {
