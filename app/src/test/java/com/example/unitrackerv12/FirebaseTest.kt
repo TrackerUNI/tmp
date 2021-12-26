@@ -26,13 +26,15 @@ var auth: FirebaseAuth = FirebaseAuth.getInstance()
  * Unittests for firebase interface
  */
 
+var email = "test@example.com"
+var password = "password"
+
 class FirebaseTest {
     /*
     @Before
     fun login()
     {
-        var email = "test@example.com"
-        var password = "password"
+
         //auth.createUserWithEmailAndPassword(email, password)
         auth.signInWithEmailAndPassword(email, password)
     }
@@ -55,6 +57,7 @@ class FirebaseTest {
 
     @Test
     fun test_add_position() {
+        auth.signInWithEmailAndPassword(email, password)
         var position = Position(71.2, -23.7)
         UserManagerV.addPosition(auth.currentUser, position)
 
@@ -74,6 +77,7 @@ class FirebaseTest {
     @Test
     fun test_create_group()
     {
+        auth.signInWithEmailAndPassword(email, password)
         var name = "G00-test"
         var groupid: String = ""
 
