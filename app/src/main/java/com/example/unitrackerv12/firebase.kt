@@ -39,6 +39,7 @@ data class UserData(
 )
 
 data class GroupData(
+    var groupid: String? = null,
     var name: String? = null,
     var admins: List<String>? = null,
     var users: List<String>? = null
@@ -300,6 +301,37 @@ class GroupManager
                 Log.d(TAG, "Solo administradores pueden agregar otros usuarios")
             }
              */
+        }
+
+        @JvmStatic fun trackedGroups(userid: String)
+                /*
+                 * Get all the tracked groups by user userid
+                 * NOTE (IMPORTANT): Copy this function in your code
+                 */
+        {
+            var tracked_groups: MutableList<GroupData> = mutableListOf()
+
+            Log.d(TAG, "Tracked groups by ${userid}:")
+
+            GroupManager.collection.get()
+                .addOnSuccessListener { snapshot ->
+                    snapshot.documents.forEach { doc ->
+                        val data: GroupData? = doc.toObject(GroupData::class.java)
+                        var isadmin: Boolean = false
+                        for (admin in data!!.admins!!) { // replace by: belong = (admins_id in ARRAY)
+                            if (admin == userid) {
+                                isadmin = true
+                                break
+                            }
+                        }
+
+                        if(isadmin){
+                            tracked_groups.add(data)
+                            Log.d(TAG, "Tracked group: ${data.groupid}")
+                        }
+                    }
+                    // At this point you have all the groups in which user 'userid' is an admin user
+                }
         }
 
         @JvmStatic fun remove(groupid: String)
