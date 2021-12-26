@@ -10,6 +10,7 @@ import com.google.firebase.firestore.*
 import com.example.unitrackerv12.UserManagerV
 import com.example.unitrackerv12.Position
 import com.example.unitrackerv12.UserData
+import org.junit.After
 
 import org.junit.Assert.*
 import org.junit.Before
@@ -34,6 +35,21 @@ class FirebaseTest {
         //auth.createUserWithEmailAndPassword(email, password)
         auth.signInWithEmailAndPassword(email, password)
     }
+
+    @Test
+    fun otherSimpleTest() {
+        assertEquals(4, 2 + 2)
+    }
+
+    /*
+    @After
+    fun signOut()
+    {
+        if(auth.currentUser != null)
+            auth.currentUser.signOut()
+    }
+
+     */
 
     @Test
     fun test_add_position() {
