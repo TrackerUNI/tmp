@@ -18,7 +18,6 @@ import org.junit.BeforeClass
 
 
 val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-var auth: FirebaseAuth = FirebaseAuth.getInstance()
 
 // created user for testing purpose (move this line to setUp method)
 
@@ -57,6 +56,7 @@ class FirebaseTest {
 
     @Test
     fun test_add_position() {
+        var auth: FirebaseAuth = FirebaseAuth.getInstance()
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if(task.isSuccessful)
