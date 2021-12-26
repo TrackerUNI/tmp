@@ -1,6 +1,7 @@
 package com.example.unitrackerv12
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.unitrackerv12.Mng.MngAccount
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -108,17 +110,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         //
         databaseRef = Firebase.database.reference
         databaseRef.addValueEventListener(logListener)
-        btnmngTracking.setOnClickListener {
-
+        btnmngAccount.setOnClickListener {
+            val intent = Intent(this, MngAccount::class.java)
+            startActivity(intent)
+            finish()
         }
+        btnMapa.isEnabled = false
+        /*btnMapa.setOnClickListener {
+            val intent = Intent(this, MapsActivity::class.java)
+            startActivity(intent)
+            finish()
+        }*/
+        /*btnmngTracking.setOnClickListener {
+
+        }*/
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
-        //
         mMap.uiSettings.isZoomControlsEnabled = true
-
         getLocationAccess()
     }
 
@@ -193,21 +203,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         //GroupManager.create("Familia")
         btnGroup.setOnClickListener{
-            if (id_grrupo.text.isNullOrEmpty())
-            //Log.e(Tag,"Debes ingresar un GroupID")
+            if (GroupID.text.isNullOrEmpty())
+                Toast.makeText(this, "Debes ingresar un GroupID", Toast.LENGTH_LONG).show()
             else {
-                GroupIDTest=id_grrupo.text.toString()
+                GroupIDTest=GroupID.text.toString()
             }
         }
-        //veriifcar si el id del grupo no e nulo y asignalor a GroupIdTest
-
-
-
-
-
-
-
-
 
         //-------------------------------FIREBASE---------------------------------------------
         locationCallback = object : LocationCallback() {
@@ -247,8 +248,5 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             Toast.makeText(applicationContext, "Error al leer datos", Toast.LENGTH_LONG)
                 .show()
         }
-
-
     }
-
 }

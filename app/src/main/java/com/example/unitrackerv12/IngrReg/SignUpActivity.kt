@@ -9,6 +9,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_signup.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.unitrackerv12.MapsActivity
 import com.example.unitrackerv12.UserManagerV
 import com.example.unitrackerv12.R
 import com.google.firebase.auth.FirebaseUser
@@ -55,6 +56,16 @@ class SignUpActivity: AppCompatActivity() {
                         }
                     }
             }
+        }
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if(currentUser != null){
+            val intent = Intent(this, MapsActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 

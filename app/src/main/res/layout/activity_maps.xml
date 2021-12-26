@@ -15,7 +15,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btnMapa"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/id_grrupo"
+        app:layout_constraintTop_toBottomOf="@+id/GroupID"
         tools:context=".MapsActivity" />
 
     <Button
@@ -37,7 +37,7 @@
 
     <Button
         android:id="@+id/btnmngTracking"
-        android:layout_width="wrap_content"
+        android:layout_width="138dp"
         android:layout_height="wrap_content"
         android:text="Admin Tracking"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -47,7 +47,7 @@
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/id_grrupo"
+        android:id="@+id/GroupID"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:ems="10"
@@ -64,7 +64,7 @@
         android:backgroundTint="@android:color/holo_blue_dark"
         android:text="Grupo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/id_grrupo"
+        app:layout_constraintStart_toEndOf="@+id/GroupID"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

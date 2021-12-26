@@ -2,11 +2,18 @@ package com.example.unitrackerv12
 
 
 import android.util.Log
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
+import com.google.firebase.firestore.auth.User
+import com.google.firebase.firestore.ktx.toObject
+import com.google.type.DateTime
 //import com.squareup.okhttp.internal.DiskLruCache
+
+import java.time.LocalDateTime
+import javax.security.auth.callback.Callback
 
 val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 var auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -25,14 +32,13 @@ data class Position(
     val time: Timestamp = Timestamp.now()
 )
 
-
 data class UserData(
     val userid: String? = null,
     val username: String? = null,
-    val lastPosition: Position? = null)
+    val lastPosition: Position? = null
+)
 
 data class GroupData(
-    var groupid: String? = null,
     var name: String? = null,
     var admins: List<String>? = null,
     var users: List<String>? = null
@@ -180,7 +186,6 @@ class GroupManager
             GroupManager.collection.add(group!!)
                 .addOnSuccessListener { doc ->
                     var groupid: String = doc.id
-                    doc.update("groupid", groupid)
                     Log.d(TAG, "Grupo ${groupid} agregado")
                 }
         }
@@ -197,7 +202,6 @@ class GroupManager
                 }
             return data
         }
-
 
         @JvmStatic fun isAdmin(groupid: String, userid: String): Boolean
                 /*
@@ -220,9 +224,7 @@ class GroupManager
                         }
                     }
                 }
-
             return belong
-
         }
 
         @JvmStatic fun isUser(groupid: String, userid: String): Boolean
@@ -247,7 +249,6 @@ class GroupManager
                         }
                     }
                 }
-
             return belong
         }
 
@@ -310,37 +311,6 @@ class GroupManager
                 .delete()
                 .addOnSuccessListener { Log.d(TAG, "Group was successfully deleted") }
                 .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
-        }
-
-        @JvmStatic fun trackedGroups(userid: String)
-                /*
-                 * Get all the tracked groups by user userid
-                 * NOTE (IMPORTANT): Copy this function in your code
-                 */
-        {
-            var tracked_groups: MutableList<GroupData> = mutableListOf()
-
-            Log.d(TAG, "Tracked groups by ${userid}:")
-
-            GroupManager.collection.get()
-                .addOnSuccessListener { snapshot ->
-                    snapshot.documents.forEach { doc ->
-                        val data: GroupData? = doc.toObject(GroupData::class.java)
-                        var isadmin: Boolean = false
-                        for (admin in data!!.admins!!) { // replace by: belong = (admins_id in ARRAY)
-                            if (admin == userid) {
-                                isadmin = true
-                                break
-                            }
-                        }
-
-                        if(isadmin){
-                            tracked_groups.add(data)
-                            Log.d(TAG, "Tracked group: ${data.groupid}")
-                        }
-                    }
-                    // At this point you have all the groups in which user 'userid' is an admin user
-                }
         }
 
         @JvmStatic fun lastPositions(groupid: String): MutableMap<String?, Position?> // {username: position, ...}
