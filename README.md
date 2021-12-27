@@ -14,4 +14,6 @@
 
 ## Demo
 
+<div align="center">
 ![demo](docs/demo.jpeg)
+</div>
