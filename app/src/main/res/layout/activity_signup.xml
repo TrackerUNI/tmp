@@ -3,105 +3,137 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#051b32">
+
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:fontFamily="sans-serif"
-        android:text="Bienvenido a UNITracker"
-        android:textAllCaps="false"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        android:background="#00221A1A"
+        android:text="UNI-TRACKER"
+        android:textColor="#FFFFFF"
+        android:textSize="60sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="300sp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:fontFamily="sans-serif"
-        android:text="Sign Up"
-        android:textAllCaps="false"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+    <EditText
+        android:id="@+id/SU_Nombre"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/shape_edittext"
+        android:ems="10"
+        android:hint="Nombres"
+        android:inputType="textPassword"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="40dp" />
 
     <EditText
-        android:id="@+id/SU_Email"
-        android:layout_width="300sp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:id="@+id/SU_Password1"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_edittext"
         android:ems="10"
-        android:hint="e-mail"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        android:hint="Confirmar contraseña"
+        android:inputType="textPassword"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@+id/SU_Password"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="42dp" />
 
     <EditText
         android:id="@+id/SU_Password"
-        android:layout_width="300sp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_edittext"
         android:ems="10"
         android:hint="Contraseña"
         android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SU_Email" />
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@+id/SU_Number"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="42dp" />
+
+    <EditText
+        android:id="@+id/SU_Number"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_edittext"
+        android:ems="10"
+        android:hint="Número de teléfono"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@+id/SU_Username"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="40dp" />
 
     <EditText
         android:id="@+id/SU_Username"
-        android:layout_width="300sp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_edittext"
         android:ems="10"
-        android:hint="Username"
+        android:hint="Nickname o e-mail"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SU_Password" />
+        app:layout_constraintTop_toBottomOf="@+id/SU_Nombre"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="40dp" />
 
-    <Button
-        android:id="@+id/buttonReg"
+    <TextView
+        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="Registrar"
+        android:layout_marginTop="20dp"
+        android:text="¿Ya tienes una cuenta?"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.535"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SU_Username" />
+        app:layout_constraintTop_toBottomOf="@+id/SU_Notificar"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/SignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="17dp"
         android:clickable="true"
-        android:text="Ya tienes una cuenta? Ingresa"
-        android:textColor="@android:color/holo_blue_light"
-        android:textSize="20sp"
+        android:text="Ingresar"
+        android:textColor="#03A9F4"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SU_Notificar"
-        tools:ignore="TouchTargetSizeCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/buttonReg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Registrar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SU_Password1" />
 
     <TextView
         android:id="@+id/SU_Notificar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:hint="Hola :)"
+        android:layout_marginTop="12dp"
+        android:text="Hola :)"
+        android:textColor="#E8684B"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
